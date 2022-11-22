@@ -49,3 +49,72 @@ function toArray<T>(a: T, b: T): T[] {
 toArray(1, 2);
 toArray("1", "2");
 toArray(1, "2"); // Error
+
+
+// 제약 조건(Constraints)
+
+// 인터페이스나 타입 별칭을 사용하는 제네릭을 작성할 수도 있습니다.
+// 다음 예제는 별도의 제약 조건(Constraints)이 없어서 모든 타입이 허용됩니다.
+
+interface MyType<T> {
+  name: string,
+  value: T
+}
+
+const dataA: MyType<string> = {
+  name: 'Data A',
+  value: 'Hello world'
+};
+const dataB: MyType<number> = {
+  name: 'Data B',
+  value: 1234
+};
+const dataC: MyType<boolean> = {
+  name: 'Data C',
+  value: true
+};
+const dataD: MyType<number[]> = {
+  name: 'Data D',
+  value: [1, 2, 3, 4]
+};
+
+// 만약 타입 변수 T가 string과 number인 경우만 허용하려면 아래 예제와 같이 extends 키워드를 사용하는 제약 조건을 추가할 수 있습니다.
+// 기본 문법은 다음과 같습니다.
+
+T extends U
+
+interface MyType<T extends string | number> {
+  name: string,
+  value: T
+}
+
+const dataA: MyType<string> = {
+  name: 'Data A',
+  value: 'Hello world'
+};
+const dataB: MyType<number> = {
+  name: 'Data B',
+  value: 1234
+};
+const dataC: MyType<boolean> = { // TS2344: Type 'boolean' does not satisfy the constraint 'string | number'.
+  name: 'Data C',
+  value: true
+};
+const dataD: MyType<number[]> = { // TS2344: Type 'number[]' does not satisfy the constraint 'string | number'.
+  name: 'Data D',
+  value: [1, 2, 3, 4]
+};
+
+// 대표적으로 type과 interface 키워드를 사용하는 타입 선언은 다음 예제와 같이 = 기호를 기준으로 ‘식별자’와 ‘타입 구현’으로 구분할 수 있습니다.
+// 제약 조건은 ‘식별자’ 영역에서 사용하는 extends에 한합니다.
+
+type U = string | number | boolean;
+
+// type 식별자 = 타입 구현
+type MyType<T extends U> = string | T;
+
+// interface 식별자 { 타입 구현 }
+interface IUser<T extends U> {
+  name: string,
+  age: T
+}

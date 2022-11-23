@@ -118,3 +118,50 @@ interface IUser<T extends U> {
   name: string,
   age: T
 }
+
+
+// 조건부 타입(Conditional Types)
+
+// 제약 조건과 다르게 ‘타입 구현’ 영역에서 사용하는 extends는 삼항 연산자(Conditional ternary operator)를 사용할 수 있습니다.
+// 이를 조건부 타입(Conditional Types)이라고 하며 다음과 같은 문법을 가집니다.
+
+T extends U ? X : Y
+
+type U = string | number | boolean;
+
+// type 식별자 = 타입 구현
+type MyType<T> = T extends U ? string : never;
+
+// interface 식별자 { 타입 구현 }
+interface IUser<T> {
+  name: string,
+  age: T extends U ? number : never
+}
+
+// `T`는 `boolean` 타입으로 제한.
+interface IUser<T extends boolean> {
+  name: string,
+  age: T extends true ? string : number, // `T`의 타입이 `true`인 경우 `string` 반환, 아닌 경우 `number` 반환.
+  isString: T
+}
+
+const str: IUser<true> = {
+  name: 'Neo',
+  age: '12', // String
+  isString: true
+}
+const num: IUser<false> = {
+  name: 'Lewis',
+  age: 12, // Number
+  isString: false
+}
+
+// 다음과 같이 삼항 연산자를 연속해서 사용할 수도 있습니다.
+
+type MyType<T> =
+  T extends string ? 'Str' :
+  T extends number ? 'Num' :
+  T extends boolean ? 'Boo' :
+  T extends undefined ? 'Und' :
+  T extends null ? 'Nul' :
+  'Obj';

@@ -165,3 +165,49 @@ type MyType<T> =
   T extends undefined ? 'Und' :
   T extends null ? 'Nul' :
   'Obj';
+
+//   infer
+
+// infer 키워드를 사용해 타입 변수의 타입 추론(Inference) 여부를 확인할 수 있습니다.
+// 기본 문법은 다음과 같습니다.
+
+//     U가 추론 가능한 타입이면 참, 아니면 거짓
+
+// T extends infer U ? X : Y
+
+// 유용하진 않지만, 이해를 위한 아주 간단한 예제를 살펴봅시다.
+// 기본 구조는 위에서 살펴본 조건부 타입과 같습니다.
+
+type MyType<T> = T extends infer R ? R : null;
+
+const a: MyType<number> = 123;
+
+// 여기서 타입 변수 R은 MyType<number>에서 받은 타입 number가 되고 infer 키워드를 통해 타입 추론이 가능한지 확인합니다.
+// number 타입은 당연히 타입 추론이 가능하니 R을 반환하게 됩니다.(만약 R을 타입 추론할 수 없다면 null이 반환됩니다)
+// 결과적으로 MyType<number>는 number를 반환하고 변수 a는 123을 할당할 수 있습니다.
+
+// 이번에는 조금 더 복잡하지만 유용한 예제를 하나 살펴봅시다.
+// ReturnType는 함수의 반환 값이 어떤 타입인지 반환합니다.
+
+//     ‘TS 유틸리티 타입 > ReturnType’ 파트를 참고하세요.
+
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
+
+function fn(num: number) {
+  return num.toString();
+}
+
+// const a: ReturnType<typeof fn> = 'Hello';
+
+// 위 예제에서 typeof fn은 (num: number) => string으로 반환 타입은 string입니다.
+// 따라서 R은 string이고 역시 infer 키워드를 통해서 타입 추론이 가능하기 때문에 R을 반환합니다.
+// 즉, string을 반환합니다.
+
+// infer 키워드에 대한 더 자세한 내용은 공식 문서의 Type inference in conditional types 파트를 참고하세요.
+// 문서 내용은 다음과 같이 간단히 정리했습니다.
+
+//     infer 키워드는 제약 조건 extends가 아닌 조건부 타입 extends 절에서만 사용 가능
+//     infer 키워드는 같은 타입 변수를 여러 위치에서 사용 가능
+//         일반적인 공변성(co-variant) 위치에선 유니언 타입으로 추론
+//         함수 인수인 반공변성(contra-variant) 위치에선 인터섹션 타입으로 추론
+//     여러 호출 시그니처(함수 오버로드)의 경우 마지막 시그니처에서 추론

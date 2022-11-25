@@ -211,3 +211,102 @@ function fn(num: number) {
 //         일반적인 공변성(co-variant) 위치에선 유니언 타입으로 추론
 //         함수 인수인 반공변성(contra-variant) 위치에선 인터섹션 타입으로 추론
 //     여러 호출 시그니처(함수 오버로드)의 경우 마지막 시그니처에서 추론
+
+// this
+
+// 함수를 다루는 데 있어 가장 중요한 내용 중 하나가 바로 this입니다.
+// 함수 내 this는 전역 객체를 참조하거나(sloppy mode), undefined(strict mode)가 되는 등 우리가 원하는 콘텍스트(context)를 잃고 다른 값이 되는 경우들이 있습니다.
+
+const obj = {
+  a: 'Hello~',
+  b: function () {
+    console.log(this.a); // obj.a
+    // Inner function
+    function b() {
+      console.log(this.a); // global.a
+    }
+  }
+};
+
+// 특히 ‘호출하지 않는 메소드’를 사용하는 경우에 this로 인한 문제가 발생합니다.
+// 우선, 다음 예제를 살펴봅시다.
+// 객체 데이터 obj에서 b 메소드는 a 속성을 this를 통해 참조하고 있습니다.
+
+const obj = {
+  a: 'Hello~',
+  b: function () {
+    console.log(this.a);
+  }
+};
+
+// 위 객체를 기준으로 아래 예제와 같이 ‘호출하지 않는 메소드’를 사용(할당)하는 경우, this가 유효한 콘텍스트를 잃어버리고 a를 참조할 수 없게 됩니다.
+
+//     많은 경우 콜백 함수가 해당합니다.
+
+obj.b(); // Hello~
+
+const b = obj.b;
+b(); // Cannot read property 'a' of undefined
+
+function someFn(cb: any) {
+  cb();
+}
+someFn(obj.b); // Cannot read property 'a' of undefined
+
+setTimeout(obj.b, 100); // undefined
+
+// 이런 상황에서 this 콘텍스트가 정상적으로 유지되어 a 속성을 참조할 수 있는 방법을 알아봅시다.
+
+// 첫 번째는 bind 메소드를 사용해 this를 직접 연결해 주는 방법입니다.
+
+//     타입스크립트에서 bind, call, apply 메소드는 기본적으로 인수 타입 체크를 하지 않기 때문에, 컴파일러 옵션에서 strict: true(혹은 strictBindCallApply: true)를 지정해 줘야 정상적으로 타입 체크를 하게 됩니다.
+
+obj.b(); // Hello~
+
+const b = obj.b.bind(obj);
+b(); // Hello~
+
+function someFn(cb: any) {
+  cb();
+}
+someFn(obj.b.bind(obj)); // Hello~
+
+setTimeout(obj.b.bind(obj), 100); // Hello~
+
+// 두 번째는 화살표 함수를 사용하는 방법입니다.
+// 다음과 같이 화살표 함수를 이용해 유효한 콘텍스트를 유지하면서 메소드를 호출합니다.
+
+//     화살표 함수는 호출된 곳이 아닌 함수가 생성된 곳에서 this를 캡처합니다.
+
+obj.b(); // Hello~
+
+const b = () => obj.b();
+b(); // Hello~
+
+function someFn(cb: any) {
+  cb();
+}
+someFn(() => obj.b()); // Hello~
+
+setTimeout(() => obj.b(), 100); // Hello~
+
+// 만약 클래스의 메소드 멤버를 정의하는 경우, 프로토타입(prototype) 메소드가 아닌 화살표 함수를 사용할 수 있습니다.
+
+class Cat {
+  constructor(private name: string) {}
+  getName = () => {
+    console.log(this.name);
+  }
+}
+const cat = new Cat('Lucy');
+cat.getName(); // Lucy
+
+const getName = cat.getName;
+getName(); // Lucy
+
+function someFn(cb: any) {
+  cb();
+}
+someFn(cat.getName); // Lucy
+
+// 여기서 주의할 점은 인스턴스를 생성할 때마다 개별적인 getName이 만들어지게 되는데, 일반적인 메소드 호출에서의 화살표 함수 사용은 비효율적이지만 만약에 메소드를 주로 콜백으로 사용하는 경우엔 프로토타입의 새로운 클로져 호출보다 화살표 함수의 생성된 getName 참조가 훨씬 효율적일 수 있습니다.

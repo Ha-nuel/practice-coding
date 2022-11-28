@@ -101,3 +101,19 @@ if (foo && foo.bar && foo.bar.baz) {}
 
 // After-ish
 if (foo?.bar?.baz) {}
+
+// Nullish 병합 연산자
+
+// 일반적으로 논리 연산자 ||를 사용해 Falsy 체크(0, "", NaN, null, undefined를 확인)하는 경우가 많습니다.
+// 여기서 0이나 "" 값을 유효 값으로 사용하는 경우 원치 않는 결과가 발생할 수 있는데, 이럴 때 유용한 Nullish 병합(Nullish Coalescing) 연산자 ??를 타입스크립트에서 사용할 수 있습니다.
+
+
+const foo = null ?? 'Hello nullish.';
+console.log(foo); // Hello nullish.
+
+const bar = false ?? true;
+console.log(bar); // false
+
+const baz = 0 ?? 12;
+console.log(baz); // 0
+

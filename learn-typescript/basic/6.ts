@@ -173,3 +173,80 @@ $ npx ts-node main.ts
 // 동작 원리는 간단합니다.
 // 타입 선언 모듈(@types/lodash)은 node_modules/@types경로에 설치되며,
 // 이 경로의 모든 타입 선언은 모듈 가져오기(Import)를 통해 컴파일에 자동으로 포함됩니다.
+
+
+// typeRoots와 types 옵션
+
+// 위에서 살펴본 것과 같이, 자바스크립트 모듈을 사용할 때 다음과 같이 타입 선언을 고민하지 않아도 되는 상황들이 있습니다.
+
+//     처음부터 타입스크립트로 작성된 모듈
+//     타입 선언(.d.ts 파일 등)을 같이 제공하는 자바스크립트 모듈
+//     Definitely Typed(@types/모듈)에 타입 선언이 기여된 자바스크립트 모듈
+
+// 하지만 어쩔 수 없이 직접 타입 선언을 작성(타이핑, Typing)해야 하는 다음과 같은 상황들도 고려해야 합니다.
+
+//     타입 선언을 찾을 수 없는 자바스크립트 모듈
+//     가지고 있는 타입 선언을 수정해야 하는 경우
+
+// 위에서 작성했던 lodash.d.ts와 같이 직접 타입 선언을 작성해서 제공할 수 있으며, 이를 좀 더 쉽게 관리할 방법으로 컴파일 옵션 typeRoots를 사용할 수 있습니다.
+
+// typeRoots 옵션을 테스트하기 위해, 새로운 프로젝트를 만들어 아래와 같이 Lodash를 설치하고 main.ts 파일을 생성합니다.
+
+//     ‘모듈’ 파트의 타입스크립트 프로젝트 생성은 ‘개발환경 / TS Node’ 파트를 참고하세요.
+
+// $ npm install lodash
+
+// 역시 ‘가져오기(Import)’ 단계에서 에러가 발생하네요.
+
+// main.ts
+
+import * as _ from 'lodash'; // Error - TS2307: Cannot find module 'lodash'.
+
+console.log(_.camelCase('import lodash module'));
+
+// 이를 해결하기 위해,
+// 아래와 같이 index.d.ts 파일을 types/lodash 경로에 생성하고,
+// tsconfig.json 파일 컴파일 옵션으로 "typeRoots": ["./types"]를 제공합니다.
+// 넘어가기 전, typeRoots 옵션의 특징에 대해서 몇 가지 살펴보면,
+
+//     기본값은 "typeRoots": ["./node_modules/@types"]입니다.
+//     typeRoots 옵션은 지정된 경로에서 index.d.ts 파일을 우선 탐색합니다.
+//     index.d.ts 파일이 없다면 package.json의 types 혹은 typings 속성에 작성된 경로와 파일 이름을 탐색합니다.
+//     타입 선언을 찾을 수 없으면 컴파일 오류가 발생합니다.
+
+// types/lodash/index.d.ts
+
+declare module 'lodash' {
+  interface ILodash {
+    camelCase(str?: string): string
+  }
+  const _: ILodash;
+  export = _;
+}
+
+TS 유틸리티 타입
+
+타입스크립트에서 제공하는 여러 전역 유틸리티 타입이 있습니다.
+이해를 돕기 위한 간단한 예제를 포함했습니다.
+더 자세한 내용은 Utility Types를 참고하세요.
+
+    타입 변수 T는 타입(Type), U는 또 다른 타입, K는 속성(key)을 의미하는 약어입니다.
+    이해를 돕기 위해 타입 변수를 T는 TYPE 또는 TYPE1, U는 TYPE2, K는 KEY로 명시했습니다.
+
+유틸리티 이름	설명 (대표 타입)	타입 변수
+Partial	TYPE의 모든 속성을 선택적으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+Required	TYPE의 모든 속성을 필수로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+Readonly	TYPE의 모든 속성을 읽기 전용으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+Record	KEY를 속성으로, TYPE를 그 속성값의 타입으로 지정하는 새로운 타입 반환 (인터페이스)	<KEY, TYPE>
+Pick	TYPE에서 KEY로 속성을 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
+Omit	TYPE에서 KEY로 속성을 생략하고 나머지를 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
+Exclude	TYPE1에서 TYPE2를 제외한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
+Extract	TYPE1에서 TYPE2를 추출한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
+NonNullable	TYPE에서 null과 undefined를 제외한 새로운 타입 반환 (유니언)	<TYPE>
+Parameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (함수, 튜플)	<TYPE>
+ConstructorParameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (클래스, 튜플)	<TYPE>
+ReturnType	TYPE의 반환 타입을 새로운 타입으로 반환 (함수)	<TYPE>
+InstanceType	TYPE의 인스턴스 타입을 반환 (클래스)	<TYPE>
+ThisParameterType	TYPE의 명시적 this 매개변수 타입을 새로운 타입으로 반환 (함수)	<TYPE>
+OmitThisParameter	TYPE의 명시적 this 매개변수를 제거한 새로운 타입을 반환 (함수)	<TYPE>
+ThisType	TYPE의 this 컨텍스트(Context)를 명시, 별도 반환 없음! (인터페이스)	<TYPE>

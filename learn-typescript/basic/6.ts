@@ -224,29 +224,191 @@ declare module 'lodash' {
   export = _;
 }
 
-TS 유틸리티 타입
+// TS 유틸리티 타입
 
-타입스크립트에서 제공하는 여러 전역 유틸리티 타입이 있습니다.
-이해를 돕기 위한 간단한 예제를 포함했습니다.
-더 자세한 내용은 Utility Types를 참고하세요.
+// 타입스크립트에서 제공하는 여러 전역 유틸리티 타입이 있습니다.
+// 이해를 돕기 위한 간단한 예제를 포함했습니다.
+// 더 자세한 내용은 Utility Types를 참고하세요.
 
-    타입 변수 T는 타입(Type), U는 또 다른 타입, K는 속성(key)을 의미하는 약어입니다.
-    이해를 돕기 위해 타입 변수를 T는 TYPE 또는 TYPE1, U는 TYPE2, K는 KEY로 명시했습니다.
+//     타입 변수 T는 타입(Type), U는 또 다른 타입, K는 속성(key)을 의미하는 약어입니다.
+//     이해를 돕기 위해 타입 변수를 T는 TYPE 또는 TYPE1, U는 TYPE2, K는 KEY로 명시했습니다.
 
-유틸리티 이름	설명 (대표 타입)	타입 변수
-Partial	TYPE의 모든 속성을 선택적으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
-Required	TYPE의 모든 속성을 필수로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
-Readonly	TYPE의 모든 속성을 읽기 전용으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
-Record	KEY를 속성으로, TYPE를 그 속성값의 타입으로 지정하는 새로운 타입 반환 (인터페이스)	<KEY, TYPE>
-Pick	TYPE에서 KEY로 속성을 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
-Omit	TYPE에서 KEY로 속성을 생략하고 나머지를 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
-Exclude	TYPE1에서 TYPE2를 제외한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
-Extract	TYPE1에서 TYPE2를 추출한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
-NonNullable	TYPE에서 null과 undefined를 제외한 새로운 타입 반환 (유니언)	<TYPE>
-Parameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (함수, 튜플)	<TYPE>
-ConstructorParameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (클래스, 튜플)	<TYPE>
-ReturnType	TYPE의 반환 타입을 새로운 타입으로 반환 (함수)	<TYPE>
-InstanceType	TYPE의 인스턴스 타입을 반환 (클래스)	<TYPE>
-ThisParameterType	TYPE의 명시적 this 매개변수 타입을 새로운 타입으로 반환 (함수)	<TYPE>
-OmitThisParameter	TYPE의 명시적 this 매개변수를 제거한 새로운 타입을 반환 (함수)	<TYPE>
-ThisType	TYPE의 this 컨텍스트(Context)를 명시, 별도 반환 없음! (인터페이스)	<TYPE>
+// 유틸리티 이름	설명 (대표 타입)	타입 변수
+// Partial	TYPE의 모든 속성을 선택적으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+// Required	TYPE의 모든 속성을 필수로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+// Readonly	TYPE의 모든 속성을 읽기 전용으로 변경한 새로운 타입 반환 (인터페이스)	<TYPE>
+// Record	KEY를 속성으로, TYPE를 그 속성값의 타입으로 지정하는 새로운 타입 반환 (인터페이스)	<KEY, TYPE>
+// Pick	TYPE에서 KEY로 속성을 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
+// Omit	TYPE에서 KEY로 속성을 생략하고 나머지를 선택한 새로운 타입 반환 (인터페이스)	<TYPE, KEY>
+// Exclude	TYPE1에서 TYPE2를 제외한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
+// Extract	TYPE1에서 TYPE2를 추출한 새로운 타입 반환 (유니언)	<TYPE1, TYPE2>
+// NonNullable	TYPE에서 null과 undefined를 제외한 새로운 타입 반환 (유니언)	<TYPE>
+// Parameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (함수, 튜플)	<TYPE>
+// ConstructorParameters	TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환 (클래스, 튜플)	<TYPE>
+// ReturnType	TYPE의 반환 타입을 새로운 타입으로 반환 (함수)	<TYPE>
+// InstanceType	TYPE의 인스턴스 타입을 반환 (클래스)	<TYPE>
+// ThisParameterType	TYPE의 명시적 this 매개변수 타입을 새로운 타입으로 반환 (함수)	<TYPE>
+// OmitThisParameter	TYPE의 명시적 this 매개변수를 제거한 새로운 타입을 반환 (함수)	<TYPE>
+// ThisType	TYPE의 this 컨텍스트(Context)를 명시, 별도 반환 없음! (인터페이스)	<TYPE>
+
+// Partial
+
+// TYPE의 모든 속성을 선택적(?)으로 변경한 새로운 타입을 반환합니다.
+
+//     ‘Optional > 속성과 메소드’ 파트를 참고하세요.
+
+// Partial<TYPE>
+
+// interface IUser {
+//   name: string,
+//   age: number
+// }
+
+// const userA: IUser = { // TS2741: Property 'age' is missing in type '{ name: string; }' but required in type 'IUser'.
+//   name: 'A'
+// };
+// const userB: Partial<IUser> = {
+//   name: 'B'
+// };
+
+// 위 예제의 Partial<IUser>은 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   name?: string,
+//   age?: number
+// }
+
+// Required
+
+// TYPE의 모든 속성을 필수로 변경한 새로운 타입을 반환합니다.
+
+// Required<TYPE>
+
+// interface IUser {
+//   name?: string,
+//   age?: number
+// }
+
+// const userA: IUser = {
+//   name: 'A'
+// };
+// const userB: Required<IUser> = { // TS2741: Property 'age' is missing in type '{ name: string; }' but required in type 'Required<IUser>'.
+//   name: 'B'
+// };
+
+// 위 예제의 Required<IUser>은 다음과 같이 이해할 수 있습니다.
+
+// interface IUser {
+//   name: string,
+//   age: number
+// }
+
+// Readonly
+
+// TYPE의 모든 속성을 읽기 전용(readonly)으로 변경한 새로운 타입을 반환합니다.
+
+//     ‘인터페이스 > 읽기 전용 속성’ 파트를 참고하세요.
+
+// Readonly<TYPE>
+
+// interface IUser {
+//   name: string,
+//   age: number
+// }
+
+// const userA: IUser = {
+//   name: 'A',
+//   age: 12
+// };
+// userA.name = 'AA';
+
+// const userB: Readonly<IUser> = {
+//   name: 'B',
+//   age: 13
+// };
+// userB.name = 'BB'; // TS2540: Cannot assign to 'name' because it is a read-only property.
+
+// 위 예제의 Readonly<IUser>는 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   readonly name: string,
+//   readonly age: number
+// }
+
+// Record
+
+// KEY를 속성(Key)으로, TYPE를 그 속성값의 타입(Type)으로 지정하는 새로운 타입을 반환합니다.
+
+// Record<KEY, TYPE>
+
+// type TName = 'neo' | 'lewis';
+
+// const developers: Record<TName, number> = {
+//   neo: 12,
+//   lewis: 13
+// };
+
+// 위 예제의 Record<TName, number>는 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   neo: number,
+//   lewis: number
+// }
+
+// Pick
+
+// TYPE에서 KEY로 속성을 선택한 새로운 타입을 반환합니다.
+// TYPE은 속성을 가지는 인터페이스나 객체 타입이어야 합니다.
+
+// Pick<TYPE, KEY>
+
+// interface IUser {
+//   name: string,
+//   age: number,
+//   email: string,
+//   isValid: boolean
+// }
+// type TKey = 'name' | 'email';
+
+// const user: Pick<IUser, TKey> = {
+//   name: 'Neo',
+//   email: 'thesecon@gmail.com',
+//   age: 22 // TS2322: Type '{ name: string; email: string; age: number; }' is not assignable to type 'Pick<IUser, TKey>'.
+// };
+
+// 위 예제의 Pick<IUser, TKey>은 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   name: string,
+//   email: string
+// }
+
+// Omit
+
+// 위에서 살펴본 Pick과 반대로,
+// TYPE에서 KEY로 속성을 생략하고 나머지를 선택한 새로운 타입을 반환합니다.
+// TYPE은 속성을 가지는 인터페이스나 객체 타입이어야 합니다.
+
+// Omit<TYPE, KEY>
+
+// interface IUser {
+//   name: string,
+//   age: number,
+//   email: string,
+//   isValid: boolean
+// }
+// type TKey = 'name' | 'email';
+
+// const user: Omit<IUser, TKey> = {
+//   age: 22,
+//   isValid: true,
+//   name: 'Neo' // TS2322: Type '{ age: number; isValid: true; name: string; }' is not assignable to type 'Pick<IUser, "age" | "isValid">'.
+// };
+
+// 위 예제의 Omit<IUser, TKey>은 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   // name: string,
+//   age: number,
+//   // email: string,
+//   isValid: boolean

@@ -412,3 +412,208 @@ declare module 'lodash' {
 //   age: number,
 //   // email: string,
 //   isValid: boolean
+
+// Omit
+
+// 위에서 살펴본 Pick과 반대로,
+// TYPE에서 KEY로 속성을 생략하고 나머지를 선택한 새로운 타입을 반환합니다.
+// TYPE은 속성을 가지는 인터페이스나 객체 타입이어야 합니다.
+
+// Omit<TYPE, KEY>
+
+// interface IUser {
+//   name: string,
+//   age: number,
+//   email: string,
+//   isValid: boolean
+// }
+// type TKey = 'name' | 'email';
+
+// const user: Omit<IUser, TKey> = {
+//   age: 22,
+//   isValid: true,
+//   name: 'Neo' // TS2322: Type '{ age: number; isValid: true; name: string; }' is not assignable to type 'Pick<IUser, "age" | "isValid">'.
+// };
+
+// 위 예제의 Omit<IUser, TKey>은 다음과 같이 이해할 수 있습니다.
+
+// interface INewType {
+//   // name: string,
+//   age: number,
+//   // email: string,
+//   isValid: boolean
+// }
+
+// Exclude
+
+// 유니언 TYPE1에서 유니언 TYPE2를 제외한 새로운 타입을 반환합니다.
+
+// Exclude<TYPE1, TYPE2>
+
+// type T = string | number;
+
+// const a: Exclude<T, number> = 'Only string';
+// const b: Exclude<T, number> = 1234; // TS2322: Type '123' is not assignable to type 'string'.
+// const c: T = 'String';
+// const d: T = 1234;
+
+// Extract
+
+// 유니언 TYPE1에서 유니언 TYPE2를 추출한 새로운 타입을 반환합니다.
+
+// Extract<TYPE1, TYPE2>
+
+// type T = string | number;
+// type U = number | boolean;
+
+// const a: Extract<T, U> = 123;
+// const b: Extract<T, U> = 'Only number'; // TS2322: Type '"Only number"' is not assignable to type 'number'.
+
+// NonNullable
+
+// 유니언 TYPE에서 null과 undefined를 제외한 새로운 타입을 반환합니다.
+
+// NonNullable<TYPE>
+
+// type T = string | number | undefined;
+
+// const a: T = undefined;
+// const b: NonNullable<T> = null; // TS2322: Type 'null' is not assignable to type 'string | number'.
+
+// Parameters
+
+// 함수 TYPE의 매개변수 타입을 새로운 튜플(Tuple) 타입으로 반환합니다.
+
+// Parameters<TYPE>
+
+// function fn(a: string | number, b: boolean) {
+//   return `[${a}, ${b}]`;
+// }
+
+// const a: Parameters<typeof fn> = ['Hello', 123]; // Type 'number' is not assignable to type 'boolean'.
+
+// 위 예제의 Parameters<typeof fn>은 다음과 같이 이해할 수 있습니다.
+
+// [string | number, boolean]
+
+// ConstructorParameters
+
+// 클래스 TYPE의 매개변수 타입을 새로운 튜플 타입으로 반환합니다.
+
+// ConstructorParameters<TYPE>
+
+// class User {
+//   constructor (public name: string, private age: number) {}
+// }
+
+// const neo = new User('Neo', 12);
+// const a: ConstructorParameters<typeof User> = ['Neo', 12];
+// const b: ConstructorParameters<typeof User> = ['Lewis']; // TS2741: Property '1' is missing in type '[string]' but required in type '[string, number]'.
+
+// 위 예제의 ConstructorParameters<typeof User>은 다음과 같이 이해할 수 있습니다.
+
+// [string, number]
+
+// ReturnType
+
+// 함수 TYPE의 반환(Return) 타입을 새로운 타입으로 반환합니다.
+
+// ReturnType<TYPE>
+
+// function fn(str: string) {
+//   return str;
+// }
+
+// const a: ReturnType<typeof fn> = 'Only string';
+// const b: ReturnType<typeof fn> = 1234; // TS2322: Type '123' is not assignable to type 'string'.
+
+// InstanceType
+
+// 클래스 TYPE의 인스턴스 타입을 반환합니다.
+
+// InstanceType<TYPE>
+
+// class User {
+//   constructor(public name: string) {}
+// }
+
+// const neo: InstanceType<typeof User> = new User('Neo');
+
+// ThisParameterType
+
+// 함수 TYPE의 명시적 this 매개변수 타입을 새로운 타입으로 반환합니다.
+// 함수 TYPE에 명시적 this 매개변수가 없는 경우 알 수 없는 타입(Unknown)을 반환합니다.
+
+//     ‘함수 > this > 명시적 this’ 파트를 참고하세요.
+
+// ThisParameterType<TYPE>
+
+// // https://www.typescriptlang.org/docs/handbook/utility-types.html#thisparametertype
+
+// function toHex(this: Number) {
+//     return this.toString(16);
+// }
+
+// function numberToString(n: ThisParameterType<typeof toHex>) {
+//     return toHex.apply(n);
+// }
+
+// 위 예제에서 함수 toHex의 명시적 this 타입은 Number이고,
+// 그 타입을 참고해서 함수 numberToString의 매개변수 n의 타입을 선언합니다.
+// 따라서 toHex에 다른 타입의 this가 바인딩 되는 것을 방지할 수 있습니다.
+// OmitThisParameter
+
+// 함수 TYPE의 명시적 this 매개변수를 제거한 새로운 타입을 반환합니다.
+
+// OmitThisParameter<TYPE>
+
+// function getAge(this: typeof cat) {
+//   return this.age;
+// }
+
+// // 기존 데이터
+// const cat = {
+//   age: 12 // Number
+// };
+// getAge.call(cat); // 12
+
+// // 새로운 데이터
+// const dog = {
+//   age: '13' // String
+// };
+// getAge.call(dog); // TS2345: Argument of type '{ age: string; }' is not assignable to parameter of type '{ age: number; }'.
+
+// 위 예제에서 데이터 cat을 기준으로 설계한 함수 getAge는 일부 다른 타입을 가지는 새로운 데이터 dog를 this로 사용할 수 없습니다.
+// 하지만 OmitThisParameter를 통해 명시적 this를 제거한 새로운 타입의 함수를 만들 수 있기 때문에,
+// getAge를 직접 수정하지 않고 데이터 dog를 사용할 수 있습니다.
+
+// const getAgeForDog: OmitThisParameter<typeof getAge> = getAge;
+// getAgeForDog.call(dog); // '13'
+
+//     this.age에는 이제 어떤 값도 들어갈 수 있음을 주의합니다.
+
+// ThisType
+
+// TYPE의 this 컨텍스트(Context)를 명시하고 별도의 타입을 반환하지 않습니다.
+
+// ThisType<TYPE>
+
+// interface IUser {
+//   name: string,
+//   getName: () => string
+// }
+
+// function makeNeo(methods: ThisType<IUser>) {
+//   return { name: 'Neo', ...methods } as IUser;
+// }
+// const neo = makeNeo({
+//   getName() {
+//     return this.name;
+//   }
+// });
+
+// neo.getName(); // Neo
+
+// 함수 makeNeo의 인수로 사용되는 메소드 getName은 내부에서 this.name을 사용하고 있기 때문에 ThisType을 통해 명시적으로 this 컨텍스트를 설정해 줍니다.
+// 단, ThisType은 별도의 타입을 반환하지 않기 때문에 makeNeo 반환 값({ name: 'Neo', ...methods })에 대한 타입이 정상적으로 추론(Inference)되지 않습니다.
+// 따라서 as IUser와 같이 따로 타입을 단언(Assertions)해야 neo.getName을 정상적으로 호출할 수 있습니다.

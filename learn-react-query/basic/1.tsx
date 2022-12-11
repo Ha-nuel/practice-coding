@@ -19,3 +19,4 @@ const { data: someData } = useSomethingMutation('생략', {
 const something = someData?.data;
 
 // => 이런 식으로 하자. 똑같지만 전의 것은 state를 설정하기 때문에 다시 렌더링이 일어난다.
+// select를 사용하는 법도 있다.

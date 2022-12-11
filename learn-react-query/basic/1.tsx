@@ -19,4 +19,11 @@ const { data: someData } = useSomethingMutation('생략', {
 const something = someData?.data;
 
 // => 이런 식으로 하자. 똑같지만 전의 것은 state를 설정하기 때문에 다시 렌더링이 일어난다.
+
 // select를 사용하는 법도 있다.
+
+// state에 담는 경우가 있다면 받아온 데이터가 수정되는 것을 클라이언트에서 그려줘야할 때?
+// isSuccess 안에서 setState를 쓰는 건 위의 무언가의 내용을 백엔드에서 받고 state에 담아주고 유저가 수정하는 것을 setState로 그려 주어야하는 수정하기 같은 로직에는 필요할 것 같다.
+
+// useEffect안에서 사용되는 비동기 함수는 따로 재활용할 일이 있지않다면 useEffect안에서 선언해주고 바로 호출시키는게 더 나은 패턴!
+// 첫 렌더링에만 실행되면 되는 함수인데 useEffect밖에 존재하면 리렌더링이될 때 마다 함수가 새로 할당되어서 자원이 낭비된다!

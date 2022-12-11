@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Calendar from 'react-calendar';
+import useEmotion from '@/hooks/useEmotion';
 import { useRequestGetDiary, useRequestGetMonthDiaries } from '@/api/diary';
 import { TodaySection, CalendarDetail } from '@/styles/diary/todayDiary-style';
 import DiaryTodayPost from './DiaryTodayPost';
@@ -16,13 +17,11 @@ interface MonthData {
 const currentDate = new Date();
 const currentYear = currentDate.getFullYear();
 const currentMonth = currentDate.getMonth() + 1;
-const currentDay = currentDate.getDate();
 
-console.log(currentDate, currentYear, currentMonth, currentDay);
-
-const getCurrentDiary = (data, day) => {
+const getCurrentDiary = (data, date) => {
   return data.find(
-    (diary: PostInterface) => new Date(diary.createdAt).getDate() === day
+    (diary: PostInterface) =>
+      new Date(diary.createdAt).getDate() === new Date(date).getDate()
   );
 };
 
@@ -34,19 +33,21 @@ export function DiaryCalendar() {
     month: currentMonth,
   });
 
-  const [day, setDay] = useState(currentDay);
+  const [fullDate, setFullDate] = useState(currentDate);
   const [id, setID] = useState(null);
   const [diary, setDiary] = useState<PostInterface | null>(null);
 
-  const { refetch: getDiary } = useRequestGetDiary(id, {
+  const { emotionState } = useEmotion(diary?.emotion, user?.nickname);
+
+  useRequestGetDiary(id, {
     onSuccess: (res) => {
+      console.log('일기 요청 성공');
+
       if (!res) {
         return;
       }
 
       setDiary(res.data);
-
-      console.log('일기 요청 성공');
     },
 
     onError: () => {
@@ -54,12 +55,13 @@ export function DiaryCalendar() {
     },
   });
 
-  const { refetch: getMonthDiaries, data: monthDiaries } =
-    useRequestGetMonthDiaries(date.year, date.month, 'calendar-diaries', {
+  const { data: monthDiaries } = useRequestGetMonthDiaries(
+    date.year,
+    date.month,
+    'calendar-diaries',
+    {
       onSuccess: (res) => {
-        console.log(res);
-
-        const currentDiary = getCurrentDiary(res.data, day);
+        const currentDiary = getCurrentDiary(res.data, fullDate);
 
         if (currentDiary) {
           setID(currentDiary.id);
@@ -75,21 +77,18 @@ export function DiaryCalendar() {
       onError: () => {
         console.log('월별 일기 요청 실패');
       },
-    });
+    }
+  );
 
   const setCurrentDay = (event) => {
     const postDate = new Date(event);
 
-    postDate.setHours(12);
-
-    const clickedDay = postDate.getDate();
-
-    setDay(clickedDay);
+    setFullDate(postDate);
 
     if (monthDiaries) {
       const { data } = monthDiaries;
 
-      const currentDiary = getCurrentDiary(data, clickedDay);
+      const currentDiary = getCurrentDiary(data, postDate);
 
       if (currentDiary) {
         setID(currentDiary.id);
@@ -133,10 +132,6 @@ export function DiaryCalendar() {
     return null;
   };
 
-  useEffect(() => {
-    console.log(id, day);
-  }, [id, day]);
-
   return (
     <TodaySection>
       <Calendar
@@ -147,14 +142,11 @@ export function DiaryCalendar() {
         defaultValue={currentDate}
       />
       <CalendarDetail>
+        {emotionState()}
         {diary ? (
-          <DiaryTodayPost
-            post={diary}
-            getDiary={getDiary}
-            getMonthDiaries={getMonthDiaries}
-          />
+          <DiaryTodayPost post={diary} />
         ) : (
-          <DiaryCreatePost getDiary={getDiary} day={day} />
+          <DiaryCreatePost fullDate={fullDate} />
         )}
       </CalendarDetail>
     </TodaySection>

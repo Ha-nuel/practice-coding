@@ -27,3 +27,7 @@ const something = someData?.data;
 
 // useEffect안에서 사용되는 비동기 함수는 따로 재활용할 일이 있지않다면 useEffect안에서 선언해주고 바로 호출시키는게 더 나은 패턴!
 // 첫 렌더링에만 실행되면 되는 함수인데 useEffect밖에 존재하면 리렌더링이될 때 마다 함수가 새로 할당되어서 자원이 낭비된다!
+
+UseQueryOptions<AxiosResponse<Diary[]>, AxiosError, Diary[], (string | number)[]
+
+// useQuery 옵션은 이런 식으로 쓰자.

@@ -31,3 +31,6 @@ const something = someData?.data;
 UseQueryOptions<AxiosResponse<Diary[]>, AxiosError, Diary[], (string | number)[]
 
 // useQuery 옵션은 이런 식으로 쓰자.
+
+// 서버에서 받아오는 것들은 react-query로, 클라이언트에서 사용하는 state는 recoil로 사용하자
+// server state, client state의 분리

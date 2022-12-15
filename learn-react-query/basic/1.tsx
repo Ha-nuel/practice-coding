@@ -34,3 +34,14 @@ UseQueryOptions<AxiosResponse<Diary[]>, AxiosError, Diary[], (string | number)[]
 
 // 서버에서 받아오는 것들은 react-query로, 클라이언트에서 사용하는 state는 recoil로 사용하자
 // server state, client state의 분리
+
+const { data: someData } = useSomethingMutation('생략', {
+  enabled: user ? true : false
+  // 생략
+});
+
+// 유저가 있을 때만 요청을 허용한다. 근데 솔직히 써도 되긴 하지만...
+
+enabled: !!user
+
+// 이렇게 쓰는 게 더 낫다. !를 통해 truthy, falsy를 진짜 true, false로 만들 수 있다. (타입스크립트를 쓸 때 유용)

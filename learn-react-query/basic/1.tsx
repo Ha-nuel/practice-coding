@@ -45,3 +45,7 @@ const { data: someData } = useSomethingMutation('생략', {
 enabled: !!user
 
 // 이렇게 쓰는 게 더 낫다. !를 통해 truthy, falsy를 진짜 true, false로 만들 수 있다. (타입스크립트를 쓸 때 유용)
+
+  options?: UseMutationOptions<AxiosResponse, AxiosError>
+
+// mutations 옵션 타입

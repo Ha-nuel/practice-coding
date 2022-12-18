@@ -49,3 +49,6 @@ enabled: !!user
   options?: UseMutationOptions<AxiosResponse, AxiosError>
 
 // mutations 옵션 타입
+
+// new Date를 쓰지 말고 moment 같은 걸 쓰자.
+// Date는 브라우저 마다 시간이 다르게 나오기 때문에 문제가 많다. (본인도 직접 하면서 겪음)
